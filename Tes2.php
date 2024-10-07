@@ -10,13 +10,16 @@
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
             color: #333;
+            margin: 0;
+            padding: 20px;
         }
 
         /* Styling judul */
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #d35400; /* Warna oranye gelap */
             font-family: 'Helvetica', sans-serif;
+            margin-bottom: 20px;
         }
 
         /* Mengatur tampilan tabel */
@@ -25,13 +28,15 @@
             margin: 20px auto;
             border-collapse: collapse;
             font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             background-color: #fff;
+            border-radius: 8px; /* Menambahkan sudut melengkung */
+            overflow: hidden; /* Menjaga sudut melengkung */
         }
 
         /* Styling header tabel */
         th {
-            background-color: #2980b9;
+            background-color: #f39c12; /* Warna kuning oranye */
             color: white;
             font-size: 18px;
             padding: 12px;
@@ -43,28 +48,29 @@
             text-align: left;
             padding: 10px;
             font-size: 16px;
+            border-bottom: 1px solid #ddd; /* Garis bawah sel */
         }
 
         /* Warna latar belakang selang-seling */
         tbody tr:nth-child(odd) {
-            background-color: #ecf0f1;
+            background-color: #ecf0f1; /* Warna abu-abu muda */
         }
 
         tbody tr:nth-child(even) {
-            background-color: #bdc3c7;
+            background-color: #bdc3c7; /* Warna abu-abu lebih gelap */
         }
 
         /* Hover efek pada baris tabel */
         tbody tr:hover {
-            background-color: #3498db;
+            background-color: #f39c12; /* Warna kuning oranye saat hover */
             color: white;
         }
     </style>
 </head>
 <body>
-    <h1>Data Posts</h1>
+    <h1>DATA POST</h1>
 
-    <table border="1" cellpadding="10" cellspacing="0">
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
@@ -74,26 +80,37 @@
         </thead>
         <tbody>
         <?php
-                // Inisialisasi URL dan pengaturan CURL
-                $url = 'https://jsonplaceholder.typicode.com/posts';
-                $ch = curl_init();
-                curl_setopt($ch,CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($ch);
-                curl_close($ch);
-                
+            // Inisialisasi URL dan pengaturan CURL
+            $url = 'http://jsonplaceholder.typicode.com/posts';
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            
+            // Cek apakah CURL berhasil
+            if ($response === false) {
+                echo "<tr><td colspan='3'>Error: " . curl_error($ch) . "</td></tr>";
+            } else {
                 // Ubah respon JSON menjadi array
                 $data = json_decode($response, true);
 
-                // Loop untuk menampilkan data dalam tabel
-                foreach ($data as $post) {
-                    echo "<tr>";
-                    echo "<td>" . $post['id'] . "</td>";
-                    echo "<td>" . $post['title'] . "</td>";
-                    echo "<td>" . $post['body'] . "</td>";
-                    echo "</tr>";
+                // Cek apakah data valid
+                if (is_array($data)) {
+                    // Loop untuk menampilkan data dalam tabel
+                    foreach ($data as $post) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($post['id']) . "</td>";
+                        echo "<td>" . htmlspecialchars($post['title']) . "</td>";
+                        echo "<td>" . htmlspecialchars($post['body']) . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='3'>No data found.</td></tr>";
                 }
-            ?>
+            }
+
+            curl_close($ch);
+        ?>
         </tbody>
     </table>
 
